@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with <%= otherUser.username %></title>
+
+    <!-- GLOBAL CSS -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+
+    <!-- PAGE CSS -->
+    <link rel="stylesheet" href="/css/pages/messages.css">
+</head>
+
+<body>
+
+<%- include("partials/navbar.ejs") %>
+
+<div class="chat-wrapper">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="chat-sidebar">
+        <h3>Direct</h3>
+        <p class="chat-subtitle">Chat with @<%= otherUser.username %></p>
+    </div>
+
+    <!-- MAIN CHAT -->
+    <div class="chat-main">
+
+        <!-- HEADER -->
+        <div class="chat-header">
+            <% if (otherUser.avatar) { %>
+                <img
+                    src="/uploads/<%= otherUser.avatar %>"
+                    class="chat-avatar"
+                    alt="<%= otherUser.username %>"
+                >
+            <% } else { %>
+                <div class="chat-avatar-fallback">
+                    <%= otherUser.username[0].toUpperCase() %>
+                </div>
+            <% } %>
+
+            <b>@<%= otherUser.username %></b>
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="chat-messages" id="messages">
+            <% messages.forEach(m => { %>
+                <div class="msg-row <%= m.sender_id === me.id ? 'me' : 'other' %>">
+                    <div>
+                        <div class="msg-bubble"><%= m.content %></div>
+                        <div class="msg-time">
+                            <%= formatTime(m.created_at) %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <!-- INPUT AREA -->
+        <div class="chat-input-area">
+            <input
+                id="messageInput"
+                type="text"
+                placeholder="Message..."
+                autocomplete="off"
+            >
+
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const myId = <%= me.id %>;
+    const otherId = <%= otherUser.id %>;
+
+    const messagesDiv = document.getElementById("messages");
+    const input = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        const res = await fetch(`/api/messages/${otherId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: text })
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+            alert("Message not sent");
+            return;
+        }
+
+        appendMessage(data.message);
+        input.value = "";
+    }
+
+    function appendMessage(m) {
+        const row = document.createElement("div");
+        row.className = "msg-row " + (m.sender_id === myId ? "me" : "other");
+
+        row.innerHTML = `
+            <div>
+                <div class="msg-bubble">${m.content}</div>
+                <div class="msg-time">
+                    ${new Date(m.created_at).toLocaleTimeString()}
+                </div>
+            </div>
+        `;
+
+        messagesDiv.appendChild(row);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    sendBtn.onclick = sendMessage;
+
+    input.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Instagram Clone</title>
+
+    <!-- GLOBAL CSS -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+
+    <!-- PAGE CSS -->
+    <link rel="stylesheet" href="/css/pages/login.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Login</h1>
+
+        <!-- Error Message -->
+        <% if (typeof error !== 'undefined') { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <!-- Success Message -->
+        <% if (typeof success !== 'undefined') { %>
+            <div class="success-message">
+                <%= success %>
+            </div>
+        <% } %>
+
+        <form action="/login" method="POST" id="loginForm">
+            <div class="input-group">
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    required
+                    value="<%= typeof email !== 'undefined' ? email : '' %>"
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="input-group">
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                    autocomplete="current-password"
+                >
+                <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Remember me</label>
+            </div>
+
+            <button type="submit" id="submitBtn">Log In</button>
+        </form>
+
+        <div class="forgot-password">
+            <a href="/forgot-password">Forgot your password?</a>
+        </div>
+
+        <div class="divider">
+            <span>Or</span>
+        </div>
+
+        <div class="social-buttons">
+            <button type="button" disabled>Facebook</button>
+            <button type="button" disabled>Google</button>
+        </div>
+
+        <a href="/register">Don't have an account? Sign up</a>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️';
+            }
+        }
+
+        function setLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            if (loading) {
+                submitBtn.innerHTML = 'Logging in...';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.innerHTML = 'Log In';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function validateForm() {
+            const email = document.querySelector('input[name="email"]');
+            const password = document.getElementById('password');
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                alert('Please enter a valid email address');
+                email.focus();
+                return false;
+            }
+
+            if (password.value.length < 6) {
+                alert('Password must be at least 6 characters long');
+                password.focus();
+                return false;
+            }
+
+            setLoading(true);
+            return true;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                setLoading(false);
+            }
+        });
+
+        window.addEventListener('load', function() {
+            document.querySelector('input[name="email"]').focus();
+        });
+
+        window.addEventListener('pageshow', function() {
+            setLoading(false);
+        });
+
+        window.addEventListener('load', function() {
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail) {
+                document.querySelector('input[name="email"]').value = rememberedEmail;
+                document.getElementById('remember').checked = true;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            if (document.getElementById('remember').checked) {
+                const email = document.querySelector('input[name="email"]').value;
+                localStorage.setItem('rememberedEmail', email);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+        });
+    </script>
+</body>
+</html>

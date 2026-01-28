@@ -1,0 +1,130 @@
+/* ===============================
+   FOLLOWERS / FOLLOWING PAGE
+================================ */
+
+body {
+    background: #fafafa;
+}
+
+/* ===============================
+   WRAPPER
+================================ */
+
+.followers-wrapper {
+    max-width: 600px;
+    margin: 80px auto;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #dbdbdb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 20px;
+}
+
+/* ===============================
+   TITLE
+================================ */
+
+.followers-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+    color: #262626;
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+
+.followers-empty {
+    text-align: center;
+    color: #8e8e8e;
+    padding: 30px 0;
+}
+
+/* ===============================
+   USER ROW
+================================ */
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #efefef;
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+/* ===============================
+   AVATAR
+================================ */
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #dbdbdb;
+}
+
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(
+        45deg,
+        #f09433,
+        #e6683c,
+        #dc2743,
+        #cc2366,
+        #bc1888
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ===============================
+   USERNAME
+================================ */
+
+.username {
+    text-decoration: none;
+    color: #262626;
+    font-weight: 600;
+}
+
+.username:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   BACK LINK
+================================ */
+
+.back-link {
+    display: inline-block;
+    margin-top: 18px;
+    text-decoration: none;
+    color: #0095f6;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 640px) {
+    .followers-wrapper {
+        margin: 70px 10px;
+    }
+}

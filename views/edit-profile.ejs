@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+
+    <!-- Page specific CSS -->
+    <link rel="stylesheet" href="/css/pages/edit-profile.css">
+</head>
+
+<body>
+<%- include("partials/navbar") %>
+
+<div class="edit-wrapper">
+    <h2>Edit Profile</h2>
+
+    <% if (typeof error !== 'undefined') { %>
+        <div class="error-message">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <form action="/profile/<%= user.id %>?_method=PATCH"
+          method="POST"
+          enctype="multipart/form-data"
+          id="profileForm">
+
+        <label>Current Profile Photo:</label>
+        <div class="current-avatar">
+            <% if (user.avatar) { %>
+                <img src="/uploads/<%= user.avatar %>" alt="Current avatar">
+            <% } else { %>
+                <div class="avatar-placeholder">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+            <% } %>
+        </div>
+
+        <label for="username">Username:</label>
+        <input
+            type="text"
+            id="username"
+            name="username"
+            value="<%= user.username %>"
+            required
+            minlength="3"
+            maxlength="30"
+            pattern="[a-zA-Z0-9_]+"
+        >
+
+        <label for="bio">Bio:</label>
+        <textarea
+            id="bio"
+            name="bio"
+            maxlength="150"
+            oninput="updateBioCount(this)"
+        ><%= user.bio || '' %></textarea>
+
+        <div id="bioCharCount" class="char-count">
+            <%= (user.bio || '').length %>/150 characters
+        </div>
+
+        <label for="avatar">Upload New Photo (optional):</label>
+        <input
+            type="file"
+            id="avatar"
+            name="avatar"
+            accept="image/*"
+            onchange="validateImage(this)"
+        >
+        <div id="fileError" class="file-error"></div>
+
+        <div id="avatarPreview">
+            <img id="preview" alt="New avatar preview">
+        </div>
+
+        <button type="submit" id="submitBtn">Save Changes</button>
+    </form>
+
+    <a href="/profile/<%= user.id %>">
+        <button class="back-btn">Cancel</button>
+    </a>
+</div>
+
+<script>
+/* 🔽 YOUR JS — UNCHANGED 🔽 */
+
+function previewImage(event) {
+    const input = event.target;
+    const previewContainer = document.getElementById('avatarPreview');
+    const preview = document.getElementById('preview');
+    const fileError = document.getElementById('fileError');
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            fileError.textContent = 'Please select a valid image file';
+            input.value = '';
+            previewContainer.style.display = 'none';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            fileError.textContent = 'Image must be smaller than 5MB';
+            input.value = '';
+            previewContainer.style.display = 'none';
+            return;
+        }
+
+        fileError.textContent = '';
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function validateImage(input) {
+    previewImage({ target: input });
+}
+
+function updateBioCount(textarea) {
+    const count = document.getElementById('bioCharCount');
+    const length = textarea.value.length;
+    count.textContent = `${length}/150 characters`;
+
+    count.className =
+        length > 140 ? 'char-count error' :
+        length > 120 ? 'char-count warning' :
+        'char-count';
+}
+
+function setLoading(loading) {
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = loading ? 'Saving...' : 'Save Changes';
+    btn.disabled = loading;
+}
+
+document.getElementById('profileForm').addEventListener('submit', e => {
+    setLoading(true);
+});
+</script>
+
+</body>
+</html>

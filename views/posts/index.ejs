@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home • Instagram</title>
+
+    <!-- ✅ FEED CSS (MUST BE IN HEAD) -->
+    <link rel="stylesheet" href="/css/pages/feed.css">
+</head>
+
+<body>
+
+<!-- ==========================
+     NAVBAR
+========================== -->
+<%- include("../partials/navbar.ejs") %>
+
+<!-- ==========================
+     STORIES SECTION
+========================== -->
+<div class="stories-outer-container">
+    <div class="stories-container">
+
+        <!-- ======================
+             YOUR STORY
+        ======================= -->
+        <form
+            id="storyForm"
+            action="/story"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+            <label class="story-item add-story">
+                <% if (session.user.avatar) { %>
+                    <img src="/uploads/<%= session.user.avatar %>" alt="Your story">
+                <% } else { %>
+                    <div class="story-placeholder">
+                        <%= session.user.username[0].toUpperCase() %>
+                    </div>
+                <% } %>
+
+                <span>Your Story</span>
+
+                <input
+                    type="file"
+                    name="storyMedia"
+                    accept="image/*,video/*"
+                    onchange="uploadStory(this)"
+                >
+            </label>
+        </form>
+
+        <!-- ======================
+             OTHER USERS STORIES
+        ======================= -->
+        <% if (stories && stories.length > 0) { %>
+            <% stories.forEach(s => { %>
+                <a
+                    class="story-item"
+                    href="/story/<%= Number(s.user_id) %>"
+                >
+                    <% if (s.avatar) { %>
+                        <img src="/uploads/<%= s.avatar %>" alt="<%= s.username %>">
+                    <% } else { %>
+                        <div class="story-placeholder">
+                            <%= s.username[0].toUpperCase() %>
+                        </div>
+                    <% } %>
+
+                    <span><%= s.username %></span>
+                </a>
+            <% }) %>
+        <% } %>
+
+    </div>
+</div>
+
+<!-- ==========================
+     POSTS SECTION
+========================== -->
+<div class="posts-container">
+
+    <% if (posts.length === 0) { %>
+        <div class="empty-state">
+            <h2>No posts to show</h2>
+            <p>Follow users to see their posts here.</p>
+            <a href="/posts/new" class="create-post-btn">
+                Create Your First Post
+            </a>
+        </div>
+    <% } %>
+
+    <% posts.forEach(post => { %>
+        <div class="post">
+
+            <!-- POST HEADER -->
+            <div class="post-header">
+                <a href="/profile/<%= post.user_id %>">
+                    <% if (post.user_avatar) { %>
+                        <img
+                            src="/uploads/<%= post.user_avatar %>"
+                            class="user-avatar"
+                        >
+                    <% } else { %>
+                        <div class="avatar-placeholder">
+                            <%= post.username[0].toUpperCase() %>
+                        </div>
+                    <% } %>
+                    @<%= post.username %>
+                </a>
+            </div>
+
+            <!-- POST MEDIA -->
+            <% if (post.media && post.media.length > 0) { %>
+                <% const m = post.media[0]; %>
+                <% if (m.media_type === "image") { %>
+                    <img src="/uploads/<%= m.filename %>" alt="Post image">
+                <% } else { %>
+                    <video
+                        src="/uploads/<%= m.filename %>"
+                        muted
+                        autoplay
+                        loop
+                        playsinline
+                    ></video>
+                <% } %>
+            <% } else if (post.image) { %>
+                <!-- OLD POSTS SUPPORT -->
+                <img src="/uploads/<%= post.image %>" alt="Post image">
+            <% } %>
+
+            <!-- POST CONTENT -->
+            <% if (post.content) { %>
+                <p class="content"><%= post.content %></p>
+            <% } %>
+
+            <!-- POST ACTIONS -->
+            <div class="post-actions">
+                <form
+                    action="/posts/<%= post.id %>/like"
+                    method="POST"
+                    class="like-form"
+                >
+                    <button type="submit" class="heart-btn">
+                        <%= post.isLiked ? "❤️" : "🤍" %>
+                    </button>
+                </form>
+
+                <a href="/posts/<%= post.id %>" class="comment-btn">💬</a>
+                <button
+                    type="button"
+                    onclick="sharePost('<%= post.id %>')"
+                    class="share-btn"
+                >📤</button>
+            </div>
+
+            <!-- LIKES -->
+            <div class="likes-count">
+                <%= post.likeCount %> likes
+            </div>
+
+            <!-- TIME -->
+            <div class="post-time">
+                Posted <%= formatTime(post.created_at) %>
+            </div>
+
+        </div>
+    <% }) %>
+
+</div>
+
+<!-- ==========================
+     SCRIPTS
+========================== -->
+<script>
+/* =========================
+   SHARE POST
+========================= */
+function sharePost(postId) {
+    const url = `${window.location.origin}/posts/${postId}`;
+
+    if (navigator.share) {
+        navigator.share({ title: "Check this post", url });
+        return;
+    }
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url)
+            .then(() => alert("✔ Link copied"))
+            .catch(() => fallbackCopy(url));
+        return;
+    }
+
+    fallbackCopy(url);
+}
+
+function fallbackCopy(text) {
+    const t = document.createElement("textarea");
+    t.value = text;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    document.body.removeChild(t);
+    alert("✔ Link copied");
+}
+
+/* =========================
+   STORY UPLOAD
+========================= */
+function uploadStory(input) {
+    if (!input.files || !input.files[0]) return;
+    document.getElementById("storyForm").submit();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+/* =================================================
+   FEED PAGE (Stories + Posts)
+================================================= */
+
+/* ---------- RESET (SAFE) ---------- */
+
+* {
+    box-sizing: border-box;
+}
+
+/* =================================================
+   STORIES SECTION
+================================================= */
+
+/* Outer wrapper (NO GAP BELOW NAVBAR) */
+.stories-outer-container {
+    display: flex;
+    justify-content: center;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+
+    /* 🔥 IMPORTANT: NO GAP */
+    margin-top: 0;
+    padding: 10px 0;
+}
+
+/* Horizontal scroll container */
+.stories-container {
+    display: flex;
+    gap: 14px;
+    padding: 0 12px;
+
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    max-width: 100%;
+}
+
+/* Hide scrollbar */
+.stories-container::-webkit-scrollbar {
+    display: none;
+}
+.stories-container {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* ---------- STORY ITEM ---------- */
+
+.story-item {
+    width: 72px;
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.story-item:hover {
+    transform: scale(1.06);
+}
+
+/* Story avatar */
+.story-item img,
+.story-placeholder {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    object-fit: cover;
+
+    background: linear-gradient(
+        45deg,
+        #f09433,
+        #e6683c,
+        #dc2743,
+        #cc2366,
+        #bc1888
+    );
+
+    padding: 3px;
+}
+
+/* Placeholder */
+.story-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+/* Username */
+.story-item span {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------- ADD STORY ---------- */
+
+.add-story {
+    position: relative;
+}
+
+.add-story input {
+    display: none;
+}
+
+.add-story::after {
+    content: "+";
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    background: var(--primary);
+    color: white;
+    font-size: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--card);
+}
+
+/* =================================================
+   POSTS SECTION
+================================================= */
+
+.posts-container {
+    max-width: 480px;
+    margin: 16px auto;
+    padding: 0 12px;
+}
+
+/* ---------- POST CARD ---------- */
+
+.post {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    animation: fadeIn 0.35s ease;
+}
+
+/* ---------- POST HEADER ---------- */
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.post-header a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+/* Avatar */
+.user-avatar,
+.avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    background: linear-gradient(
+        45deg,
+        #f09433,
+        #e6683c,
+        #dc2743,
+        #cc2366,
+        #bc1888
+    );
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* ---------- MEDIA ---------- */
+
+.post img,
+.post video {
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+}
+
+/* ---------- CONTENT ---------- */
+
+.content {
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+}
+
+/* ---------- ACTIONS ---------- */
+
+.post-actions {
+    display: flex;
+    gap: 16px;
+    padding: 8px 12px;
+    font-size: 22px;
+}
+
+.heart-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 26px;
+}
+
+/* ---------- LIKES + TIME ---------- */
+
+.likes-count {
+    padding: 0 12px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.post-time {
+    padding: 8px 12px 12px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ---------- EMPTY STATE ---------- */
+
+.empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 500px) {
+    .posts-container {
+        margin-top: 8px;
+    }
+}

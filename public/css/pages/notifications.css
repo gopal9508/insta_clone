@@ -1,0 +1,161 @@
+/* ===============================
+   NOTIFICATIONS PAGE
+================================ */
+
+body {
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+}
+
+/* ===============================
+   MAIN CONTAINER
+================================ */
+
+.notify-container {
+    max-width: 600px;
+    margin: 80px auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.notify-header {
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+}
+
+/* ===============================
+   SINGLE NOTIFICATION
+================================ */
+
+.notification {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    transition: background 0.2s ease;
+}
+
+.notification:last-child {
+    border-bottom: none;
+}
+
+/* Unread highlight */
+.notification.unread {
+    background: rgba(0, 149, 246, 0.08);
+}
+
+.notification:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+/* Dark mode hover fix */
+[data-theme="dark"] .notification:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* ===============================
+   AVATAR
+================================ */
+
+.avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.avatar-fallback {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(
+        45deg,
+        #f09433,
+        #e6683c,
+        #dc2743,
+        #cc2366,
+        #bc1888
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* ===============================
+   TEXT
+================================ */
+
+.notify-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.4;
+}
+
+.notify-text b {
+    font-weight: 600;
+}
+
+/* ===============================
+   LINKS
+================================ */
+
+.notify-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.notify-link:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+
+.empty {
+    padding: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+================================ */
+
+@media (max-width: 600px) {
+    .notify-container {
+        margin: 70px 10px;
+        border-radius: 10px;
+    }
+
+    .notification {
+        padding: 12px;
+    }
+
+    .notify-header {
+        font-size: 16px;
+    }
+}

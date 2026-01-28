@@ -1,0 +1,158 @@
+<%- include("../partials/navbar.ejs") %>
+
+<!-- PAGE CSS -->
+<link rel="stylesheet" href="/css/pages/post-show.css">
+
+<div class="post-container">
+
+    <!-- ================= USER HEADER ================= -->
+    <div class="header">
+        <a href="/profile/<%= post.user_id %>">
+            <% if (post.user_avatar) { %>
+                <img src="/uploads/<%= post.user_avatar %>" class="user-avatar" alt="<%= post.username %>">
+            <% } else { %>
+                <div class="avatar-placeholder">
+                    <%= post.username.charAt(0).toUpperCase() %>
+                </div>
+            <% } %>
+            @<%= post.username %>
+        </a>
+    </div>
+
+    <!-- ================= POST MEDIA ================= -->
+    <% if (post.media && post.media.length > 0) { %>
+        <div class="post-media">
+            <% post.media.forEach(m => { %>
+                <% if (m.media_type === "video") { %>
+                    <video src="/uploads/<%= m.filename %>" controls playsinline></video>
+                <% } else { %>
+                    <img src="/uploads/<%= m.filename %>" alt="Post image">
+                <% } %>
+            <% }) %>
+        </div>
+    <% } else if (post.image) { %>
+        <div class="post-media">
+            <img src="/uploads/<%= post.image %>" alt="Post image">
+        </div>
+    <% } %>
+
+    <!-- ================= ACTIONS ================= -->
+    <div class="post-actions">
+        <form action="/posts/<%= post.id %>/like" method="POST" class="like-form">
+            <button type="submit" class="heart-btn">
+                <%= post.isLiked ? "❤️" : "🤍" %>
+            </button>
+        </form>
+
+        <button class="share-btn" onclick="sharePost('<%= post.id %>')">📤</button>
+    </div>
+
+    <!-- ================= LIKES ================= -->
+    <div class="likes-count">
+        <strong><%= post.likeCount %> likes</strong>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <% if (post.content) { %>
+        <div class="content">
+            <strong>@<%= post.username %></strong> <%= post.content %>
+        </div>
+    <% } %>
+
+    <!-- ================= TIME ================= -->
+    <div class="post-time">
+        Posted <%= formatTime(post.created_at) %>
+    </div>
+
+    <!-- ================= OWNER ACTIONS ================= -->
+    <% if (session.user && session.user.id === post.user_id) { %>
+        <div class="edit-delete">
+            <a href="/posts/<%= post.id %>/edit">Edit</a>
+
+            <form action="/posts/<%= post.id %>?_method=DELETE" method="POST"
+                  onsubmit="return confirm('Delete this post permanently?')">
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+    <% } %>
+
+    <!-- ================= COMMENTS ================= -->
+    <div class="comments-section">
+        <h3>Comments (<%= comments.length %>)</h3>
+
+        <% if (comments.length === 0) { %>
+            <div class="no-comments">
+                No comments yet. Be the first to comment!
+            </div>
+        <% } else { %>
+            <% comments.forEach(c => { %>
+                <div class="single-comment">
+                    <a href="/profile/<%= c.user_id %>" class="comment-user">
+                        @<%= c.username %>
+                    </a>
+                    <p class="comment-text"><%= c.comment %></p>
+                    <div class="comment-time">
+                        <%= formatTime(c.created_at) %>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <!-- ================= ADD COMMENT ================= -->
+    <% if (session.user) { %>
+        <form class="comment-box"
+              action="/posts/<%= post.id %>/comment"
+              method="POST"
+              onsubmit="return validateComment(this)">
+            <input type="text"
+                   name="comment"
+                   placeholder="Add a comment..."
+                   maxlength="300"
+                   required>
+            <button type="submit" id="commentBtn">Post</button>
+        </form>
+    <% } else { %>
+        <div class="login-to-comment">
+            <a href="/login">Login to comment</a>
+        </div>
+    <% } %>
+
+    <!-- ================= NAVIGATION ================= -->
+    <div class="navigation">
+        <a href="/posts">← Back to Feed</a>
+        <% if (session.user) { %>
+            <a href="/posts/new">Create New Post →</a>
+        <% } %>
+    </div>
+
+</div>
+
+<script>
+function sharePost(postId) {
+    const url = `${window.location.origin}/posts/${postId}`;
+
+    if (navigator.share) {
+        navigator.share({ title: "Check this post", url });
+    } else {
+        navigator.clipboard.writeText(url);
+        showToast("📋 Link copied!");
+    }
+}
+
+function showToast(msg) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function validateComment(form) {
+    const btn = document.getElementById("commentBtn");
+    btn.innerText = "Posting...";
+    btn.disabled = true;
+    return true;
+}
+</script>

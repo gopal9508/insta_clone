@@ -1,0 +1,171 @@
+/* =================================================
+   EDIT POST PAGE
+================================================= */
+
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px;
+    padding: 20px;
+}
+
+/* ---------- Card ---------- */
+
+.edit-container {
+    background: var(--card);
+    padding: 35px;
+    width: 100%;
+    max-width: 500px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* ---------- Title ---------- */
+
+.edit-container h2 {
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* ---------- Labels ---------- */
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 20px;
+    display: block;
+}
+
+/* ---------- Inputs ---------- */
+
+input,
+textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-top: 8px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: var(--bg);
+    font-family: inherit;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 2px rgba(0,149,246,0.1);
+}
+
+textarea {
+    resize: vertical;
+    height: 120px;
+    min-height: 100px;
+}
+
+/* ---------- Submit ---------- */
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,149,246,0.3);
+}
+
+.submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ---------- Back Button ---------- */
+
+.back-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    background: var(--muted);
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #717171;
+}
+
+/* ---------- Current Image ---------- */
+
+.current-image {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.current-image img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+}
+
+/* ---------- No Image ---------- */
+
+.no-image {
+    text-align: center;
+    color: var(--muted);
+    padding: 20px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 2px dashed var(--border);
+}
+
+/* ---------- Character Counter ---------- */
+
+.char-count {
+    text-align: right;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.char-count.warning {
+    color: #ffaa00;
+}
+
+.char-count.error {
+    color: #ff4444;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 480px) {
+    .edit-container {
+        padding: 25px;
+    }
+}

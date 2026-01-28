@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🌍 GLOBAL CSS -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+
+    <!-- 🌙 THEME SCRIPT -->
+    <script src="/js/theme.js" defer></script>
+
+    <title>Instagram Clone</title>
+</head>
+
+<body>
+
+<nav class="ig-navbar">
+
+    <!-- LEFT -->
+    <div class="left">
+        <a href="/posts">
+            <img
+                src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Instagram_logo.svg"
+                alt="Instagram"
+            >
+        </a>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center">
+        <form action="/search" method="GET" id="searchForm">
+            <input
+                type="text"
+                name="q"
+                id="searchInput"
+                placeholder="Search users..."
+                autocomplete="off"
+            >
+        </form>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+        <a class="icon-btn" href="/posts" title="Home">🏠</a>
+        <a class="icon-btn" href="/posts/new" title="Create">➕</a>
+
+        <!-- 🌙 DARK MODE TOGGLE -->
+        <button
+            class="icon-btn theme-toggle"
+            id="themeToggle"
+            type="button"
+            title="Toggle dark mode"
+        >
+            🌙
+        </button>
+
+        <% if (session && session.user) { %>
+            <!-- 🔔 Notifications -->
+            <a href="/notifications" class="icon-btn notification-btn" style="position:relative;">
+                🔔
+                <span id="notifBadge"></span>
+            </a>
+        <% } %>
+
+        <% if (session && session.user) { %>
+            <!-- PROFILE DROPDOWN -->
+            <div class="dropdown">
+                <button class="icon-btn dropdown-toggle" type="button">
+                    <% if (session.user.avatar) { %>
+                        <img
+                            src="/uploads/<%= session.user.avatar %>"
+                            class="nav-profile-img"
+                        >
+                    <% } else { %>
+                        <div class="nav-avatar-placeholder">
+                            <%= session.user.username.charAt(0).toUpperCase() %>
+                        </div>
+                    <% } %>
+                </button>
+
+                <div class="dropdown-menu">
+                    <a href="/profile/<%= session.user.id %>">Profile</a>
+                    <a href="/profile/<%= session.user.id %>/edit">Edit Profile</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+        <% } else { %>
+            <a href="/login" class="profile-btn">Login</a>
+        <% } %>
+
+    </div>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ---------- DROPDOWN ---------- */
+    const toggle = document.querySelector(".dropdown-toggle");
+    const menu = document.querySelector(".dropdown-menu");
+
+    if (toggle && menu) {
+        toggle.addEventListener("click", e => {
+            e.stopPropagation();
+            menu.style.display =
+                menu.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", () => {
+            menu.style.display = "none";
+        });
+    }
+
+    /* ---------- SEARCH ---------- */
+    const input = document.getElementById("searchInput");
+    const form = document.getElementById("searchForm");
+
+    if (input && form) {
+        let timer;
+        input.addEventListener("input", () => {
+            clearTimeout(timer);
+            if (input.value.trim().length > 1) {
+                timer = setTimeout(() => form.submit(), 600);
+            }
+        });
+    }
+
+    /* ---------- NOTIFICATIONS ---------- */
+    async function fetchUnreadNotifications() {
+        try {
+            const res = await fetch("/api/notifications/unread-count");
+            const data = await res.json();
+            const badge = document.getElementById("notifBadge");
+
+            if (!badge) return;
+
+            if (data.ok && data.count > 0) {
+                badge.textContent = data.count;
+                badge.style.display = "inline-block";
+            } else {
+                badge.style.display = "none";
+            }
+        } catch {}
+    }
+
+    fetchUnreadNotifications();
+    setInterval(fetchUnreadNotifications, 5000);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .error-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 350px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #d9534f;
+        }
+
+        p {
+            margin: 10px 0 20px;
+            color: #555;
+        }
+
+        a {
+            padding: 10px 20px;
+            background-color: #0095f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        a:hover {
+            background-color: #0079c9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-box">
+        <h1>Oops! Something went wrong 😞</h1>
+        <p><%= message %></p>
+        <a href="/posts">Go Home</a>
+    </div>
+
+</body>
+</html>

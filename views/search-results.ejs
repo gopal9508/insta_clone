@@ -1,0 +1,30 @@
+<%- include("partials/navbar.ejs") %>
+
+
+
+<div style="max-width:600px; margin:80px auto; padding:20px;">
+
+    <h2>Search results for "<%= query %>"</h2>
+
+    <% if (users.length === 0) { %>
+        <p>No users found.</p>
+    <% } %>
+
+    <% users.forEach(u => { %>
+        <div style="padding:10px; border-bottom:1px solid #ddd;">
+            <a href="/profile/<%= u.id %>" style="text-decoration:none; color:#000; display:flex; align-items:center; gap:10px;">
+
+                <% if (u.avatar) { %>
+                    <img src="/uploads/<%= u.avatar %>" width="40" height="40" style="border-radius:50%;">
+                <% } else { %>
+                    <div style="width:40px; height:40px; border-radius:50%; background:#ccc;
+                                display:flex; align-items:center; justify-content:center;">
+                        <%= u.username[0].toUpperCase() %>
+                    </div>
+                <% } %>
+
+                <span>@<%= u.username %></span>
+            </a>
+        </div>
+    <% }) %>
+</div>

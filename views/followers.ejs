@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        <%= profileUser.username %> – 
+        <%= type === 'followers' ? 'Followers' : 'Following' %>
+    </title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="/css/pages/followers.css">
+</head>
+
+<body>
+
+<%- include("partials/navbar.ejs") %>
+
+<div class="followers-wrapper">
+
+    <h2 class="followers-title">
+        <%= type === 'followers' ? 'Followers of ' : 'Following of ' %>
+        @<%= profileUser.username %>
+    </h2>
+
+    <% if (users.length === 0) { %>
+        <p class="followers-empty">
+            No <%= type %> yet.
+        </p>
+    <% } else { %>
+
+        <% users.forEach(u => { %>
+            <div class="user-item">
+
+                <% if (u.avatar) { %>
+                    <img 
+                        src="/uploads/<%= u.avatar %>" 
+                        class="avatar"
+                        alt="<%= u.username %>">
+                <% } else { %>
+                    <div class="avatar-placeholder">
+                        <%= u.username.charAt(0).toUpperCase() %>
+                    </div>
+                <% } %>
+
+                <a href="/profile/<%= u.id %>" class="username">
+                    @<%= u.username %>
+                </a>
+
+            </div>
+        <% }) %>
+
+    <% } %>
+
+    <a href="/profile/<%= profileUser.id %>" class="back-link">
+        ← Back to profile
+    </a>
+
+</div>
+
+</body>
+</html>

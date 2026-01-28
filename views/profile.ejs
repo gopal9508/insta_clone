@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= user.username %> • Profile</title>
+
+ 
+</head>
+<body>
+<%- include("partials/navbar.ejs") %>
+<link rel="stylesheet" href="/css/pages/profile.css">
+
+<div class="profile-container">
+    <div class="profile-header">
+        <!-- Profile photo -->
+        <div style="position: relative;">
+            <% if (user.avatar) { %>
+                <img
+                    src="/uploads/<%= user.avatar %>"
+                    class="profile-photo"
+                    alt="<%= user.username %>'s profile picture"
+                >
+            <% } else { %>
+                <div class="profile-photo-placeholder">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Right-side info -->
+        <div class="profile-info">
+            <h1><%= user.username %></h1>
+
+            <div class="stats">
+                <span><b><%= posts.length %></b> posts</span>
+                <span onclick="showList('followers')">
+                    <b><%= followers %></b> followers
+                </span>
+                <span onclick="showList('following')">
+                    <b><%= following %></b> following
+                </span>
+            </div>
+
+            <div class="bio"><%= user.bio || "No bio added yet." %></div>
+
+            <!-- BUTTONS -->
+            <div class="button-row">
+                <% if (session.user && session.user.id === user.id) { %>
+                    <!-- Own profile -->
+                    <a href="/profile/<%= user.id %>/edit" class="btn btn-edit">
+                        Edit Profile
+                    </a>
+                    <a href="/posts/new" class="btn btn-follow">
+                        Create Post
+                    </a>
+                <% } else if (session.user) { %>
+                    <!-- Viewing someone else -->
+                    <a href="/messages/<%= user.id %>" class="btn btn-message">
+                        💬 Message
+                    </a>
+
+                    <% if (isFollowing) { %>
+                        <form action="/unfollow/<%= user.id %>" method="POST" style="display:inline;">
+                            <button class="btn btn-unfollow" type="submit">Unfollow</button>
+                        </form>
+                    <% } else { %>
+                        <form action="/follow/<%= user.id %>" method="POST" style="display:inline;">
+                            <button class="btn btn-follow" type="submit">Follow</button>
+                        </form>
+                    <% } %>
+                <% } else { %>
+                    <a href="/login" class="btn btn-follow">Log in to follow</a>
+                <% } %>
+            </div>
+
+            <!-- MUTUAL FOLLOWERS -->
+            <% if (session.user && session.user.id !== user.id && mutualFollowers && mutualFollowers.length > 0) { %>
+                <div class="mutual-section">
+                    <div class="section-title">
+                        Mutual followers
+                    </div>
+                    <div class="mutual-chips">
+                        <% mutualFollowers.forEach(m => { %>
+                            <div class="chip">
+                                <% if (m.avatar) { %>
+                                    <img src="/uploads/<%= m.avatar %>" alt="<%= m.username %>">
+                                <% } %>
+                                <span>@<%= m.username %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- SUGGESTED USERS (only on own profile) -->
+            <% if (session.user && session.user.id === user.id && suggestedUsers && suggestedUsers.length > 0) { %>
+                <div class="suggested-section">
+                    <div class="section-title">
+                        Suggested for you
+                    </div>
+                    <div class="suggested-chips">
+                        <% suggestedUsers.forEach(s => { %>
+                            <div class="chip">
+                                <% if (s.avatar) { %>
+                                    <img src="/uploads/<%= s.avatar %>" alt="<%= s.username %>">
+                                <% } %>
+                                <span>@<%= s.username %></span>
+                                <form action="/follow/<%= s.id %>" method="POST" style="display:inline;">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-follow"
+                                        style="padding:4px 10px; font-size:11px;"
+                                    >
+                                        Follow
+                                    </button>
+                                </form>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- FOLLOWERS / FOLLOWING LISTS -->
+    <div class="followers-following-lists">
+        <% if (followersList && followersList.length > 0) { %>
+            <div id="followersList" class="user-list hidden">
+                <div class="section-title">Followers</div>
+                <% followersList.forEach(f => { %>
+                    <div class="user-row">
+                        <div class="user-row-left">
+                            <% if (f.avatar) { %>
+                                <img src="/uploads/<%= f.avatar %>" class="user-avatar-small" alt="<%= f.username %>">
+                            <% } else { %>
+                                <div class="avatar-placeholder-small">
+                                    <%= f.username.charAt(0).toUpperCase() %>
+                                </div>
+                            <% } %>
+                            <a href="/profile/<%= f.id %>" class="username-link">@<%= f.username %></a>
+                        </div>
+                        <div class="user-list-buttons">
+                            <% if (session.user && session.user.id === user.id) { %>
+                                <% if (f.youFollow) { %>
+                                    <form action="/unfollow/<%= f.id %>" method="POST">
+                                        <button type="submit" class="btn btn-unfollow">Unfollow</button>
+                                    </form>
+                                <% } else { %>
+                                    <form action="/follow/<%= f.id %>" method="POST">
+                                        <button type="submit" class="btn btn-follow">Follow back</button>
+                                    </form>
+                                <% } %>
+                                <form
+                                    action="/remove-follower/<%= f.id %>"
+                                    method="POST"
+                                    onsubmit="return confirm('Remove this follower?');"
+                                >
+                                    <button type="submit" class="btn btn-unfollow">Remove</button>
+                                </form>
+                            <% } else if (session.user && session.user.id !== user.id) { %>
+                                <% if (f.youFollow) { %>
+                                    <span class="badge-muted">Following</span>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <% if (followingList && followingList.length > 0) { %>
+            <div id="followingList" class="user-list hidden">
+                <div class="section-title">Following</div>
+                <% followingList.forEach(f => { %>
+                    <div class="user-row">
+                        <div class="user-row-left">
+                            <% if (f.avatar) { %>
+                                <img src="/uploads/<%= f.avatar %>" class="user-avatar-small" alt="<%= f.username %>">
+                            <% } else { %>
+                                <div class="avatar-placeholder-small">
+                                    <%= f.username.charAt(0).toUpperCase() %>
+                                </div>
+                            <% } %>
+                            <a href="/profile/<%= f.id %>" class="username-link">@<%= f.username %></a>
+                        </div>
+                        <div class="user-list-buttons">
+                            <% if (session.user && session.user.id === user.id) { %>
+                                <form action="/unfollow/<%= f.id %>" method="POST">
+                                    <button type="submit" class="btn btn-unfollow">Unfollow</button>
+                                </form>
+                            <% } else if (session.user && session.user.id !== user.id) { %>
+                                <% if (f.youFollow) { %>
+                                    <span class="badge-muted">Following</span>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- POSTS GRID -->
+    <div class="posts-grid">
+        <% if (posts.length === 0) { %>
+            <div class="no-posts">
+                <h3>No posts yet</h3>
+                <% if (session.user && session.user.id === user.id) { %>
+                    <p>Share photos and moments to start your profile.</p>
+                    <a href="/posts/new" class="create-post-btn">Create Your First Post</a>
+                <% } else { %>
+                    <p>This user hasn't posted anything yet.</p>
+                <% } %>
+            </div>
+        <% } else { %>
+            <% posts.forEach(post => { %>
+                <a class="post-item" href="/posts/<%= post.id %>">
+                    <% if (post.media && post.media.length > 0) { %>
+
+    <% const m = post.media[0]; %>
+
+    <% if (m.media_type === "image") { %>
+        <img src="/uploads/<%= m.filename %>">
+    <% } else { %>
+        <video src="/uploads/<%= m.filename %>" muted autoplay loop></video>
+    <% } %>
+
+<% } else if (post.image) { %>
+
+    <img src="/uploads/<%= post.image %>">
+
+<% } %>
+
+                    <div class="post-overlay">
+                        <div class="overlay-item">
+                            ❤️ <span><%= post.likeCount %></span>
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    function showList(type) {
+        const followersList = document.getElementById('followersList');
+        const followingList = document.getElementById('followingList');
+
+        if (!followersList && !followingList) return;
+
+        if (type === 'followers') {
+            if (followersList) followersList.classList.toggle('hidden');
+            if (followingList && !followingList.classList.contains('hidden')) {
+                followingList.classList.add('hidden');
+            }
+        } else if (type === 'following') {
+            if (followingList) followingList.classList.toggle('hidden');
+            if (followersList && !followersList.classList.contains('hidden')) {
+                followersList.classList.add('hidden');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

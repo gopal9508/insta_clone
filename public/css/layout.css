@@ -1,0 +1,157 @@
+/* ================= NAVBAR LAYOUT ================= */
+
+.ig-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    /* ✅ DARK MODE SAFE */
+    background: rgba( var(--nav-bg-rgb), 0.95 );
+    backdrop-filter: blur(12px);
+}
+
+/* ---------- LEFT (LOGO) ---------- */
+
+.ig-navbar .left img {
+    height: 34px;
+}
+
+/* ---------- CENTER (SEARCH) ---------- */
+
+.ig-navbar .center input {
+    width: 240px;
+    padding: 8px 14px;
+    border-radius: 8px;
+
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+
+    font-size: 14px;
+    outline: none;
+}
+
+.ig-navbar .center input::placeholder {
+    color: var(--muted);
+}
+
+.ig-navbar .center input:focus {
+    border-color: var(--primary);
+}
+
+/* ---------- RIGHT (ICONS) ---------- */
+
+.ig-navbar .right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 22px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+    text-decoration: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+    opacity: 0.85;
+}
+
+/* ---------- PROFILE IMAGE ---------- */
+
+.nav-profile-img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+.nav-avatar-placeholder {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(
+        45deg,
+        #f09433,
+        #e6683c,
+        #dc2743,
+        #cc2366,
+        #bc1888
+    );
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- DROPDOWN ---------- */
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 42px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    min-width: 180px;
+    display: none;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+    background: var(--bg);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+    .ig-navbar {
+        padding: 10px 14px;
+    }
+
+    .ig-navbar .center input {
+        width: 180px;
+    }
+
+    .ig-navbar .right {
+        gap: 16px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ig-navbar .center {
+        display: none;
+    }
+}

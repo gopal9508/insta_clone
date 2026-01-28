@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Post</title>
+
+    
+</head>
+
+<body>
+    <%- include("../partials/navbar.ejs") %>
+<link rel="stylesheet" href="/css/pages/edit-post.css">
+
+    <div class="page-wrapper">
+        <div class="edit-container">
+            <h2>Edit Post</h2>
+
+            <form action="/posts/<%= post.id %>?_method=PATCH" method="POST" id="editForm">
+                <!-- Display current image if exists -->
+                <% if (post.image) { %>
+                    <label>Current Image:</label>
+                    <div class="current-image">
+                        <img src="/uploads/<%= post.image %>" alt="Current post image">
+                    </div>
+                <% } else { %>
+                    <div class="no-image">
+                        No image attached to this post
+                    </div>
+                <% } %>
+
+                <label for="content">Content:</label>
+                <textarea id="content" name="content" maxlength="500" oninput="updateCharCount(this)" required><%= post.content %></textarea>
+                <div id="charCount" class="char-count"><%= post.content ? post.content.length : 0 %>/500 characters</div>
+
+                <button type="submit" id="submitBtn">Update Post</button>
+            </form>
+
+            <a href="/posts/<%= post.id %>">
+                <button class="back-btn" style="width: 100%; padding: 14px; border: none; border-radius: 8px; cursor: pointer; color: white; font-size: 16px; font-weight: 600; margin-top: 10px;">Cancel</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function updateCharCount(textarea) {
+            const charCount = document.getElementById('charCount');
+            const length = textarea.value.length;
+            charCount.textContent = `${length}/500 characters`;
+            
+            if (length > 450) {
+                charCount.className = 'char-count error';
+            } else if (length > 400) {
+                charCount.className = 'char-count warning';
+            } else {
+                charCount.className = 'char-count';
+            }
+        }
+
+        function setLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            if (loading) {
+                submitBtn.innerHTML = 'Updating...';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.innerHTML = 'Update Post';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function validateForm() {
+            const content = document.getElementById('content');
+            
+            if (!content.value.trim()) {
+                alert('Please enter some content for your post');
+                content.focus();
+                return false;
+            }
+            
+            if (content.value.trim().length > 500) {
+                alert('Content must be less than 500 characters');
+                content.focus();
+                return false;
+            }
+            
+            setLoading(true);
+            return true;
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                setLoading(false);
+            }
+        });
+
+        // Auto-focus content field
+        window.addEventListener('load', function() {
+            document.getElementById('content').focus();
+        });
+
+        // Reset loading state if page is refreshed
+        window.addEventListener('pageshow', function() {
+            setLoading(false);
+        });
+    </script>
+</body>
+</html>

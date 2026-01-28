@@ -1,0 +1,265 @@
+/* ===============================
+   REGISTER PAGE LAYOUT
+================================ */
+
+body {
+    background: #fafafa;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ===============================
+   CARD CONTAINER
+================================ */
+
+.container {
+    background: white;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dbdbdb;
+    animation: fadeIn 0.5s ease;
+}
+
+/* ===============================
+   HEADINGS
+================================ */
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #262626;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* ===============================
+   FORM INPUTS
+================================ */
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 12px;
+    border-radius: 8px;
+    border: 1px solid #dbdbdb;
+    font-size: 15px;
+    outline: none;
+    background: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: #0095f6;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.input-group input:valid {
+    border-color: #4CAF50;
+}
+
+/* ===============================
+   PASSWORD TOGGLE
+================================ */
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.password-toggle:hover {
+    background: #f0f0f0;
+}
+
+/* ===============================
+   PASSWORD STRENGTH
+================================ */
+
+.password-strength {
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+}
+
+.strength-weak {
+    background: #ff4444;
+    width: 33%;
+}
+
+.strength-medium {
+    background: #ffaa00;
+    width: 66%;
+}
+
+.strength-strong {
+    background: #00c851;
+    width: 100%;
+}
+
+.password-feedback {
+    font-size: 12px;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    min-height: 16px;
+}
+
+/* ===============================
+   SUBMIT BUTTON
+================================ */
+
+button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background: #0081d6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 149, 246, 0.3);
+}
+
+button[type="submit"]:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===============================
+   TERMS & LINKS
+================================ */
+
+.terms {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.4;
+}
+
+.terms a {
+    color: #0095f6;
+    text-decoration: none;
+}
+
+.terms a:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   DIVIDER
+================================ */
+
+.divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: "";
+    border-top: 1px solid #dbdbdb;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+}
+
+.divider span {
+    background: white;
+    padding: 0 15px;
+    color: #8e8e8e;
+    font-size: 14px;
+}
+
+/* ===============================
+   SOCIAL BUTTONS
+================================ */
+
+.social-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.social-buttons button {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #dbdbdb;
+    background: white;
+    border-radius: 8px;
+    cursor: not-allowed;
+    color: #666;
+    opacity: 0.7;
+    font-size: 14px;
+}
+
+/* ===============================
+   ERROR MESSAGE
+================================ */
+
+.error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #c62828;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* ===============================
+   FOOTER LINK
+================================ */
+
+a {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #0095f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}

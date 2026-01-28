@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Instagram Clone</title>
+
+    <!-- GLOBAL CSS -->
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/animations.css">
+
+    <!-- PAGE CSS -->
+    <link rel="stylesheet" href="/css/pages/register.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Create Account</h1>
+
+        <!-- Error Message -->
+        <% if (typeof error !== 'undefined') { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/register" method="POST" id="registerForm">
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    required
+                    minlength="3"
+                    maxlength="20"
+                    pattern="[a-zA-Z0-9_]+"
+                    title="Username can only contain letters, numbers, and underscores"
+                    value="<%= typeof username !== 'undefined' ? username : '' %>"
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="input-group">
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    required
+                    value="<%= typeof email !== 'undefined' ? email : '' %>"
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="input-group">
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Create Password"
+                    required
+                    minlength="6"
+                    oninput="checkPasswordStrength(this.value)"
+                    autocomplete="new-password"
+                >
+                <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+            </div>
+
+            <div class="password-strength">
+                <div class="strength-bar" id="strengthBar"></div>
+            </div>
+            <div id="passwordFeedback" class="password-feedback"></div>
+
+            <button type="submit" id="submitBtn">Create Account</button>
+        </form>
+
+        <div class="terms">
+            By signing up, you agree to our
+            <a href="/terms">Terms</a> and
+            <a href="/privacy">Privacy Policy</a>.
+        </div>
+
+        <div class="divider">
+            <span>Or sign up with</span>
+        </div>
+
+        <div class="social-buttons">
+            <button type="button" disabled>Facebook</button>
+            <button type="button" disabled>Google</button>
+        </div>
+
+        <a href="/login">Already have an account? Login</a>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️';
+            }
+        }
+
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('strengthBar');
+            const feedback = document.getElementById('passwordFeedback');
+
+            let strength = 0;
+            let feedbackText = '';
+
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            strengthBar.className = 'strength-bar';
+
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                feedbackText = '';
+            } else if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                feedbackText = 'Weak password';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                feedbackText = 'Medium strength';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                feedbackText = 'Strong password';
+            }
+
+            feedback.textContent = feedbackText;
+        }
+
+        function setLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            if (loading) {
+                submitBtn.innerHTML = 'Creating Account...';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.innerHTML = 'Create Account';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function validateForm() {
+            const username = document.querySelector('input[name="username"]');
+            const email = document.querySelector('input[name="email"]');
+            const password = document.getElementById('password');
+
+            const usernameRegex = /^[a-zA-Z0-9_]+$/;
+            if (!usernameRegex.test(username.value)) {
+                alert('Username can only contain letters, numbers, and underscores');
+                username.focus();
+                return false;
+            }
+
+            if (username.value.length < 3) {
+                alert('Username must be at least 3 characters long');
+                username.focus();
+                return false;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                alert('Please enter a valid email address');
+                email.focus();
+                return false;
+            }
+
+            if (password.value.length < 6) {
+                alert('Password must be at least 6 characters long');
+                password.focus();
+                return false;
+            }
+
+            setLoading(true);
+            return true;
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                setLoading(false);
+            }
+        });
+
+        window.addEventListener('load', function() {
+            document.querySelector('input[name="username"]').focus();
+        });
+
+        window.addEventListener('pageshow', function() {
+            setLoading(false);
+        });
+
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<%- include("partials/navbar.ejs") %>
+
+<!-- GLOBAL CSS -->
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/animations.css">
+
+<!-- PAGE CSS -->
+<link rel="stylesheet" href="/css/pages/notifications.css">
+
+<div class="notify-container">
+    <div class="notify-header">Notifications</div>
+
+    <% if (notifications.length === 0) { %>
+        <div class="empty">No notifications yet</div>
+    <% } %>
+
+    <% notifications.forEach(n => { %>
+        <div class="notification <%= n.is_read ? '' : 'unread' %>">
+
+            <% if (n.avatar) { %>
+                <img
+                    src="/uploads/<%= n.avatar %>"
+                    alt="<%= n.username %>"
+                    class="avatar-img"
+                >
+            <% } else { %>
+                <div class="avatar avatar-fallback">
+                    <%= n.username.charAt(0).toUpperCase() %>
+                </div>
+            <% } %>
+
+            <div class="notify-text">
+
+                <% if (n.type === 'message') { %>
+                    <a class="notify-link" href="/messages/<%= n.sender_id %>">
+                        <b>@<%= n.username %></b>
+                        <%= n.is_read ? 'sent you a message' : '<strong>sent you a message</strong>' %>
+                    </a>
+
+                <% } else if (n.type === 'like') { %>
+                    <a class="notify-link" href="/posts/<%= n.post_id %>">
+                        <b>@<%= n.username %></b>
+                        <%= n.is_read ? 'liked your post' : '<strong>liked your post</strong>' %>
+                    </a>
+
+                <% } else if (n.type === 'comment') { %>
+                    <a class="notify-link" href="/posts/<%= n.post_id %>">
+                        <b>@<%= n.username %></b>
+                        <%= n.is_read ? 'commented on your post' : '<strong>commented on your post</strong>' %>
+                    </a>
+
+                <% } else if (n.type === 'follow') { %>
+                    <a class="notify-link" href="/profile/<%= n.sender_id %>">
+                        <b>@<%= n.username %></b>
+                        <%= n.is_read ? 'started following you' : '<strong>started following you</strong>' %>
+                    </a>
+                <% } %>
+
+            </div>
+        </div>
+    <% }) %>
+</div>

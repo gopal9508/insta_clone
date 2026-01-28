@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Post</title>
+
+   
+</head>
+
+<body>
+ <%- include("../partials/navbar.ejs") %>
+<link rel="stylesheet" href="/css/pages/create-post.css">
+
+<div class="page-wrapper">
+    <div class="create-container">
+        <h1>Create a New Post</h1>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form method="POST" action="/posts" enctype="multipart/form-data" id="postForm">
+
+            <!-- ✅ CAPTION HEADER + SUGGEST BUTTON -->
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label for="content">What's on your mind?</label>
+
+                <button type="button"
+                        id="suggestBtn"
+                        style="
+                            background:#f5f5f5;
+                            border:1px solid #ddd;
+                            border-radius:20px;
+                            padding:5px 12px;
+                            cursor:pointer;
+                            font-size:13px;">
+                    ✨ Suggest caption
+                </button>
+            </div>
+
+            <!-- ✅ CAPTION -->
+            <textarea id="content"
+                      name="content"
+                      placeholder="Share your thoughts..."
+                      maxlength="500"
+                      oninput="updateCharCount(this)"
+                      required></textarea>
+
+            <div id="charCount" class="char-count">0/500 characters</div>
+
+            <!-- ✅ FILE UPLOAD -->
+            <label for="image">Add a photo or video (optional)</label>
+            <input type="file"
+                   name="images"
+                   id="imageInput"
+                   multiple
+                   accept="image/*,video/*">
+
+            <div id="fileError"
+                 style="color:#ff4444; font-size:12px; margin-bottom:15px;"></div>
+
+            <div id="imagePreview">
+                <img id="preview" alt="Image preview">
+            </div>
+
+            <button type="submit" id="submitBtn">Share Post</button>
+        </form>
+
+        <a href="/posts">
+            <button class="back-btn"
+                style="width:100%; padding:14px; border:none; border-radius:8px;
+                       cursor:pointer; color:white; font-size:16px; font-weight:600;">
+                Cancel
+            </button>
+        </a>
+    </div>
+</div>
+    <script>
+        function updateCharCount(textarea) {
+            const charCount = document.getElementById('charCount');
+            const length = textarea.value.length;
+            charCount.textContent = `${length}/500 characters`;
+            
+            if (length > 450) {
+                charCount.className = 'char-count error';
+            } else if (length > 400) {
+                charCount.className = 'char-count warning';
+            } else {
+                charCount.className = 'char-count';
+            }
+        }
+
+        function previewImage(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('imagePreview');
+            const preview = document.getElementById('preview');
+            const fileError = document.getElementById('fileError');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    fileError.textContent = 'Please select a valid image (JPEG, PNG, GIF, WebP)';
+                    input.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Validate file size (5MB max)
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    fileError.textContent = 'Image must be smaller than 5MB';
+                    input.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+                
+                fileError.textContent = '';
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+                fileError.textContent = '';
+            }
+        }
+
+        function validateImage(input) {
+            previewImage({ target: input });
+        }
+
+        function setLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            if (loading) {
+                submitBtn.innerHTML = 'Sharing...';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.innerHTML = 'Share Post';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function validateForm() {
+            const content = document.getElementById('content');
+            const fileError = document.getElementById('fileError');
+            
+            if (!content.value.trim()) {
+                alert('Please enter some content for your post');
+                content.focus();
+                return false;
+            }
+            
+            if (content.value.trim().length > 500) {
+                alert('Content must be less than 500 characters');
+                content.focus();
+                return false;
+            }
+            
+            setLoading(true);
+            return true;
+        }
+
+        document.getElementById('postForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                setLoading(false);
+            }
+        });
+
+        // Prevent form resubmission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        // Auto-focus content field
+        window.addEventListener('load', function() {
+            document.getElementById('content').focus();
+        });
+      
+document.getElementById("suggestBtn").addEventListener("click", async () => {
+    const captionBox = document.getElementById("caption");
+    const filesInput = document.querySelector("input[type=file]");
+    const button = document.getElementById("suggestBtn");
+
+    button.innerText = "⏳ Thinking...";
+    button.disabled = true;
+
+    try {
+        const keywords = [];
+
+        // ✅ Collect simple hints
+        if (filesInput && filesInput.files.length > 0) {
+            for (let file of filesInput.files) {
+                if (file.type.startsWith("image")) keywords.push("photo");
+                if (file.type.startsWith("video")) keywords.push("video");
+            }
+        }
+
+        const res = await fetch("/api/suggest-caption", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                keywords: keywords,
+                currentCaption: captionBox.value
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.ok) {
+            captionBox.value = data.caption;
+        } else {
+            alert("Could not generate caption");
+        }
+
+    } catch (err) {
+        alert("Error generating caption");
+    }
+
+    button.innerText = "✨ Suggest caption";
+    button.disabled = false;
+});
+
+
+    </script>
+</body>
+</html>    
