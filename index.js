@@ -12,10 +12,12 @@ const db = require("./db");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const methodOverride = require("method-override");
+const helmet = require("helmet");
 
 // -----------------------------------------------------
 // MIDDLEWARE
 // -----------------------------------------------------
+app.use(helmet());
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // <<< IMPORTANT: to read JSON bodies (for /api/messages)
