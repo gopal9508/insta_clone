@@ -155,6 +155,9 @@ function isLoggedIn(req, res, next) {
 // -----------------------------------------------------
 // FEED (POSTS + STORIES)
 // -----------------------------------------------------
+
+
+
 app.get("/posts", isLoggedIn, (req, res, next) => {
     const userId = req.session.user.id;
 
