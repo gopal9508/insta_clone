@@ -1692,6 +1692,12 @@ app.use((err, req, res, next) => {
         message: "Something went wrong!",
     });
 });
+// -----------------------------------------------------
+// PRIVACY PAGE
+// -----------------------------------------------------
+app.get("/privacy", (req, res) => {
+    res.render("privacy");
+});
 
 // 404
 app.use((req, res) => {
